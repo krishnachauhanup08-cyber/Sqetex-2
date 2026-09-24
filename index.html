@@ -567,7 +567,7 @@
     );
 
 
-  // SECURITY: prevent HTML injection
+  // SECURITY: prevent HTML injection 
   function escapeHTML(text) {
 
     const div =
@@ -578,6 +578,88 @@
     return div.innerHTML;
   }
 
+</script>
+  <div id="authBox" style="padding:10px;">
+  <h3>Signup / Login</h3>
+  <input type="email" id="email" placeholder="Email" style="display:block;margin:5px 0;padding:8px;width:90%;" />
+  <input type="password" id="password" placeholder="Password" style="display:block;margin:5px 0;padding:8px;width:90%;" />
+  <button onclick="signup()">Signup</button>
+  <button onclick="login()">Login</button>
+  <p id="status"></p>
+</div>
+
+<div id="dataBox" style="padding:10px;">
+  <h3>Data Store</h3>
+  <input type="text" id="dataInput" placeholder="Kuch likho" style="padding:8px;width:70%;" />
+  <button onclick="saveData()">Save</button>
+  <button onclick="loadData()">Load Data</button>
+  <ul id="dataList"></ul>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+  import {
+    getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword
+  } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+  import {
+    getFirestore, collection, addDoc, getDocs
+  } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAH1rat6w9-7kjMRLa3ZigXDAFK0eeo-PA", 
+    authDomain: "sqetex-ccc19.firebaseapp.com",
+    projectId: "sqetex-ccc19",
+    storageBucket: "sqetex-ccc19.firebasestorage.app",
+    messagingSenderId: "733771927613",
+    appId: "1:733771927613:web:a0449e9c2847884bf5da54"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  window.signup = function () {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCred) => {
+        document.getElementById("status").innerText = "Signup Success! " + userCred.user.email;
+      })
+      .catch((error) => {
+        document.getElementById("status").innerText = "Error: " + error.message;
+      });
+  };
+
+  window.login = function () {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCred) => {
+        document.getElementById("status").innerText = "Login Success! " + userCred.user.email;
+      })
+      .catch((error) => {
+        document.getElementById("status").innerText = "Error: " + error.message;
+      });
+  };
+
+  window.saveData = async function () {
+    const value = document.getElementById("dataInput").value;
+    if (!value) return;
+    await addDoc(collection(db, "myData"), { text: value, createdAt: new Date() });
+    document.getElementById("dataInput").value = "";
+    alert("Data saved!");
+  };
+
+  window.loadData = async function () {
+    const list = document.getElementById("dataList");
+    list.innerHTML = "";
+    const querySnapshot = await getDocs(collection(db, "myData"));
+    querySnapshot.forEach((doc) => {
+      const li = document.createElement("li");
+      li.innerText = doc.data().text;
+      list.appendChild(li);
+    });
+  };
 </script>
 
 </body>
