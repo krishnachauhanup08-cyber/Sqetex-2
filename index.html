@@ -265,14 +265,236 @@
 </head>
 
 <body> 
- <div id="authBox" style="padding:15px;background:#f4f4f4;">
-  <h3>Login / Signup</h3>
-  <input type="email" id="email" placeholder="Email" style="display:block;margin:5px 0;padding:8px;width:90%;" />
-  <input type="password" id="password" placeholder="Password" style="display:block;margin:5px 0;padding:8px;width:90%;" />
-  <button onclick="signup()">Signup</button>
-  <button onclick="login()">Login</button>
-  <p id="status"></p>
+ 
+<style>
+  #authBox {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: linear-gradient(160deg, #29b6f6 0%, #0288d1 100%);
+    font-family: -apple-system, Roboto, Arial, sans-serif;
+    padding: 20px;
+  }
+
+  #authBox .auth-card {
+    background: #fff;
+    width: 100%;
+    max-width: 380px;
+    border-radius: 20px;
+    padding: 36px 28px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+    animation: slideUp 0.4s ease-out;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  #authBox .logo-circle {
+    position: relative;
+    width: 78px;
+    height: 78px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0d47a1 0%, #0b3c8a 50%, #072a63 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    box-shadow:
+      0 12px 28px rgba(41,182,246,0.45),
+      0 0 0 6px rgba(41,182,246,0.12),
+      inset 0 2px 6px rgba(255,255,255,0.4);
+    animation: floatPulse 3s ease-in-out infinite;
+  }
+
+  @keyframes floatPulse {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-4px) scale(1.03); }
+  }
+
+  #authBox .logo-circle::after {
+    content: "";
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    border: 2px solid rgba(41,182,246,0.25);
+    animation: ringPulse 2.5s ease-out infinite;
+  }
+
+  @keyframes ringPulse {
+    0% { transform: scale(0.9); opacity: 0.8; }
+    100% { transform: scale(1.35); opacity: 0; }
+  }
+
+  #authBox .logo-circle svg {
+    width: 34px;
+    height: 34px;
+    fill: #ffd54f;
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.25));
+    position: relative;
+    z-index: 1;
+  }
+
+  #authBox .logo-circle .dot {
+    position: absolute;
+    width: 9px;
+    height: 9px;
+    background: #4caf50;
+    border: 2.5px solid #fff;
+    border-radius: 50%;
+    bottom: 2px;
+    right: 4px;
+    z-index: 2;
+  }
+
+  #authBox .app-title {
+    text-align: center;
+    color: #1a1a1a;
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  #authBox .app-title span {
+    color: #29b6f6;
+  }
+
+  #authBox .app-subtitle {
+    text-align: center;
+    color: #999;
+    font-size: 14px;
+    margin-bottom: 26px;
+  }
+
+  #authBox .input-group {
+    position: relative;
+    margin-bottom: 16px;
+  }
+
+  #authBox .input-group svg {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    fill: #aaa;
+    pointer-events: none;
+    transition: fill 0.2s;
+  }
+
+  #authBox .input-group input {
+    width: 100%;
+    padding: 14px 16px 14px 42px;
+    border: 1.5px solid #ececec;
+    border-radius: 12px;
+    background: #f8f9fa;
+    font-size: 15px;
+    outline: none;
+    transition: border 0.2s, background 0.2s;
+  }
+
+  #authBox .input-group input:focus {
+    border-color: #29b6f6;
+    background: #fff;
+  }
+
+  #authBox .input-group input:focus + svg,
+  #authBox .input-group:focus-within svg {
+    fill: #29b6f6;
+  }
+
+  #authBox .btn-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 6px;
+  }
+
+  #authBox button {
+    flex: 1;
+    padding: 14px 0;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.15s, opacity 0.2s, box-shadow 0.2s;
+  }
+
+  #authBox button:active {
+    transform: scale(0.97);
+  }
+
+  #authBox button.btn-login {
+    background: linear-gradient(135deg, #29b6f6, #0288d1);
+    color: #fff;
+    box-shadow: 0 8px 16px rgba(41,182,246,0.35);
+  }
+
+  #authBox button.btn-login:hover {
+    box-shadow: 0 10px 20px rgba(41,182,246,0.45);
+  }
+
+  #authBox button.btn-signup {
+    background: #eef7fb;
+    color: #29b6f6;
+    border: 1.5px solid #d5eefb;
+  }
+
+  #authBox button.btn-signup:hover {
+    background: #e3f3fc;
+  }
+
+  #authBox #status {
+    text-align: center;
+    color: #e53935;
+    font-size: 13px;
+    margin-top: 16px;
+    min-height: 16px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    #authBox .auth-card { background: #1e1e1e; }
+    #authBox .app-title { color: #f0f0f0; }
+    #authBox .input-group input { background: #2a2a2a; border-color: #3a3a3a; color: #eee; }
+    #authBox .input-group input:focus { background: #2f2f2f; }
+    #authBox button.btn-signup { background: #22303a; color: #4fc3f7; border-color: #2a3f4a; }
+  }
+</style>
+
+<div id="authBox">
+  <div class="auth-card">
+    <div class="logo-circle">
+      <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>
+      <span class="dot"></span>
+    </div>
+
+    <div class="app-title">Chat With <span>Friends</span></div>
+    <div class="app-subtitle">Login Or Signup For Chat</div>
+
+    <div class="input-group">
+      <input type="email" id="email" placeholder="Email" />
+      <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+    </div>
+
+    <div class="input-group">
+      <input type="password" id="password" placeholder="Password" />
+      <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm3 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-signup" onclick="signup()">Signup</button>
+      <button class="btn-login" onclick="login()">Login</button>
+    </div>
+
+    <p id="status"></p>
+  </div>
 </div>
+
+  
 
 <div id="chatApp" style="display:none;padding:15px;background:#eef3f7;">
   <p>Aapki User ID (dosto ko do): <b id="myUid"></b></p>
