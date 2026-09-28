@@ -545,7 +545,66 @@
   let currentUser = null;
   let currentChatId = null;
   let unsubscribeMessages = null;
+let myProfile = null;
 
+function validUsername(u) {
+  return /^[a-z0-9._]{3,30}$/.test(u) && !u.includes("..") && !u.endsWith(".") && !u.startsWith(".");
+}
+
+function showProfile() {
+  document.getElementById("pUsername").innerText = "@" + myProfile.username;
+  document.getElementById("pName").innerText = myProfile.name || "";
+  document.getElementById("pBio").innerText = myProfile.bio || "";
+  document.getElementById("pAvatar").innerText = myProfile.username[0];
+}
+
+async function loadProfile(user) {
+  const snap = await getDoc(doc(db, "users", user.uid));
+  if (!snap.exists()) {
+    document.getElementById("setupBox").style.display = "flex";
+    return;
+  }
+  myProfile = snap.data();
+  document.getElementById("setupBox").style.display = "none";
+  showProfile();
+}
+
+window.saveUsername = async function () {
+  const username = document.getElementById("usernameInput").value.trim().toLowerCase();
+  const name = document.getElementById("nameInput").value.trim() || username;
+  const err = document.getElementById("setupError");
+  err.innerText = "";
+
+  if (!validUsername(username)) {
+    err.innerText = "Username 3-30 akshar ka ho: a-z, 0-9, . ya _ (shuru/end mein . nahi)";
+    return;
+  }
+
+  const unameRef = doc(db, "usernames", username);
+  const userRef = doc(db, "users", currentUser.uid);
+  try {
+    await runTransaction(db, async (tx) => {
+      const taken = await tx.get(unameRef);
+      if (taken.exists()) throw new Error("Ye username pehle se kisi ne le rakha hai");
+      tx.set(unameRef, { uid: currentUser.uid });
+      tx.set(userRef, { username, name, bio: "", createdAt: serverTimestamp() });
+    });
+    await loadProfile(currentUser);
+  } catch (e) {
+    err.innerText = e.message;
+  }
+};
+
+window.editProfile = async function () {
+  const name = prompt("Naam:", myProfile.name || "");
+  if (name === null) return;
+  const bio = prompt("Bio:", myProfile.bio || "");
+  if (bio === null) return;
+  await updateDoc(doc(db, "users", currentUser.uid), { name: name.trim(), bio: bio.trim() });
+  myProfile.name = name.trim();
+  myProfile.bio = bio.trim();
+  showProfile();
+};
   window.signup = function () {
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
