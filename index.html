@@ -497,11 +497,20 @@
   
 
 <div id="chatApp" style="display:none;padding:15px;background:#eef3f7;">
-  <p>Aapki User ID (dosto ko do): <b id="myUid"></b></p>
-  <button onclick="logout()">Logout</button>
-  <hr/>
+ <div class="profile">
+    <div class="p-ring"><div class="p-avatar" id="pAvatar">?</div></div>
+    <div class="p-info">
+      <div class="p-username" id="pUsername"></div>
+      <div class="p-name" id="pName"></div>
+      <div class="p-bio" id="pBio"></div>
+    </div>
+    <div class="p-actions">
+      <button onclick="editProfile()">Edit profile</button>
+      <button onclick="logout()">Logout</button>
+    </div>
+ </div> 
   <h3>Chat karo</h3>
-  <input type="text" id="friendUid" placeholder="Dost ki User ID daalo" style="padding:8px;width:70%;" />
+  <input type="text" id="friendUid" placeholder="Dost ka @username daalo" style="padding:8px;width:70%;" />
   <button onclick="startChat()">Chat Start Karo</button>
 
   <div id="chatWindow" style="display:none;margin-top:15px;">
@@ -517,7 +526,7 @@
     getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut
   } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
   import {
-    getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp
+    getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, doc, getDoc, setDoc, updateDoc, runTransaction
   } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
   const firebaseConfig = {
