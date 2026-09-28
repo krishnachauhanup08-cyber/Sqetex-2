@@ -632,7 +632,7 @@ window.editProfile = async function () {
       currentUser = user;
       document.getElementById("authBox").style.display = "none";
       document.getElementById("chatApp").style.display = "block";
-      document.getElementById("myUid").innerText = user.uid;
+     loadProfile(user);
     } else {
       currentUser = null;
       document.getElementById("authBox").style.display = "block";
