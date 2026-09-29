@@ -592,7 +592,7 @@ if (myProfile.photo) {
   av.style.backgroundImage = "none";
   av.innerText = (myProfile.name || myProfile.username)[0].toUpperCase();
 }
-
+}
 async function loadProfile(user) {
   const snap = await getDoc(doc(db, "users", user.uid));
   if (!snap.exists()) {
