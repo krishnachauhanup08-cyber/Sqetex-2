@@ -634,6 +634,25 @@ window.removePhoto = async function () {
   myProfile.photo = "";
   showProfile();
 }; 
+  window.togglePhotoMenu = function (e) {
+  e.stopPropagation();
+  const m = document.getElementById("photoMenu");
+  const r = e.currentTarget.getBoundingClientRect();
+  m.style.left = r.left + window.scrollX + "px";
+  m.style.top = r.bottom + window.scrollY + 6 + "px";
+  m.style.display = m.style.display === "block" ? "none" : "block";
+};
+
+window.closePhotoMenu = function () {
+  document.getElementById("photoMenu").style.display = "none";
+};
+
+window.changePhoto = function () {
+  closePhotoMenu();
+  document.getElementById("photoInput").click();
+};
+
+document.addEventListener("click", closePhotoMenu);
 async function loadProfile(user) {
   const snap = await getDoc(doc(db, "users", user.uid));
   if (!snap.exists()) {
