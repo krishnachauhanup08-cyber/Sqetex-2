@@ -715,7 +715,16 @@ window.editProfile = async function () {
     input.value = "";
   };
 </script>
-  
+ <div id="setupBox">
+  <div class="card">
+    <h2>Apna username chuno</h2>
+    <p>Dost isse tumhe dhundhenge. Sirf a-z, 0-9, . aur _ (3 se 30 akshar).</p>
+    <input id="usernameInput" placeholder="username" autocapitalize="none" autocomplete="off">
+    <input id="nameInput" placeholder="Poora naam">
+    <div id="setupError"></div>
+    <button onclick="saveUsername()">Aage badho</button>
+  </div>
+ </div> 
 
 </body>
 </html>
