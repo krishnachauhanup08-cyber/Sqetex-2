@@ -584,7 +584,13 @@ function showProfile() {
   document.getElementById("pUsername").innerText = "@" + myProfile.username;
   document.getElementById("pName").innerText = myProfile.name || "";
   document.getElementById("pBio").innerText = myProfile.bio || "";
-  document.getElementById("pAvatar").innerText = myProfile.username[0];
+  const av = document.getElementById("pAvatar");
+if (myProfile.photo) {
+  av.style.backgroundImage = `url(${myProfile.photo})`;
+  av.innerText = "";
+} else {
+  av.style.backgroundImage = "none";
+  av.innerText = (myProfile.name || myProfile.username)[0].toUpperCase();
 }
 
 async function loadProfile(user) {
