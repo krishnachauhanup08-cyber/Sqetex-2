@@ -791,6 +791,9 @@ window.editProfile = async function () {
     });
     input.value = "";
   };
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/service-worker.js");
+  }
 </script>
  <div id="setupBox">
   <div class="card">
