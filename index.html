@@ -752,8 +752,8 @@ async function loadProfile(user) {
   myProfile = snap.data();
   document.getElementById("setupBox").style.display = "none";
   showProfile();
+  loadChatList();
 }
-
 window.saveUsername = async function () {
   const username = document.getElementById("usernameInput").value.trim().toLowerCase();
   const name = document.getElementById("nameInput").value.trim() || username;
