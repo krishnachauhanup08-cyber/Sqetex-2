@@ -826,44 +826,154 @@ window.editProfile = async function () {
     }
   });
 
-  window.startChat = async function () {
-  const uname = document.getElementById("friendUid").value.trim().toLowerCase().replace(/^@/, "");
-  if (!uname) return alert("Dost ka username daalo");
-  if (uname === myProfile.username) return alert("Apna hi username mat daalo");
+  window.toggleMenu = function () {
+  document.getElementById("dropdownMenu").classList.toggle("open");
+};
 
-  const snap = await getDoc(doc(db, "usernames", uname));
-  if (!snap.exists()) return alert("Ye username nahi mila");
-  const friendUid = snap.data().uid;
+window.openProfileModal = function () {
+  document.getElementById("dropdownMenu").classList.remove("open");
+  document.getElementById("profileModal").classList.add("open");
+};
 
+window.closeProfileModal = function () {
+  document.getElementById("profileModal").classList.remove("open");
+};
+
+window.closeProfileModalOutside = function (e) {
+  if (e.target.id === "profileModal") closeProfileModal();
+};
+
+function timeAgo(ts) {
+  if (!ts) return "";
+  const d = ts.toDate();
+  const now = new Date();
+  if (d.toDateString() === now.toDateString()) {
+    return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  }
+  const yesterday = new Date(now);
+  yesterday.setDate(now.getDate() - 1);
+  if (d.toDateString() === yesterday.toDateString()) return "Kal";
+  return d.toLocaleDateString([], { day: "2-digit", month: "short" });
+}
+
+let chatListUnsub = null;
+let currentFriendUid = null;
+let currentFriendProfile = null;
+
+function loadChatList() {
+  const q = query(
+    collection(db, "userChats"),
+    where("uid", "==", currentUser.uid),
+    orderBy("lastMessageTime", "desc")
+  );
+  if (chatListUnsub) chatListUnsub();
+  chatListUnsub = onSnapshot(q, (snapshot) => {
+    const list = document.getElementById("chatList");
+    list.innerHTML = "";
+    snapshot.forEach((docSnap) => {
+      const c = docSnap.data();
+      const row = document.createElement("div");
+      row.className = "chat-item";
+      row.onclick = () =>
+        openChat(c.otherUid, {
+          username: c.otherUsername,
+          name: c.otherName,
+          photo: c.otherPhoto,
+        });
+
+      const avatar = document.createElement("div");
+      avatar.className = "chat-item-avatar";
+      if (c.otherPhoto) {
+        avatar.style.backgroundImage = `url(${c.otherPhoto})`;
+      } else {
+        avatar.innerText = (c.otherName || c.otherUsername)[0].toUpperCase();
+      }
+
+      const info = document.createElement("div");
+      info.className = "chat-item-info";
+      const nameDiv = document.createElement("div");
+      nameDiv.className = "chat-item-name";
+      nameDiv.innerText = "@" + c.otherUsername;
+      const lastDiv = document.createElement("div");
+      lastDiv.className = "chat-item-last";
+      lastDiv.innerText = c.lastMessage || "";
+      info.appendChild(nameDiv);
+      info.appendChild(lastDiv);
+
+      const time = document.createElement("div");
+      time.className = "chat-item-time";
+      time.innerText = timeAgo(c.lastMessageTime);
+
+      row.appendChild(avatar);
+      row.appendChild(info);
+      row.appendChild(time);
+      list.appendChild(row);
+    });
+  });
+}
+
+window.openChat = function (friendUid, friendProfile) {
+  currentFriendUid = friendUid;
+  currentFriendProfile = friendProfile;
   const ids = [currentUser.uid, friendUid].sort();
   currentChatId = ids.join("_");
 
-  document.getElementById("chatWindow").style.display = "block";
-  document.getElementById("messagesBox").innerHTML = "";
+  document.getElementById("chatListScreen").style.display = "none";
+  document.getElementById("chatScreen").style.display = "flex";
+  document.getElementById("chName").innerText = "@" + friendProfile.username;
 
+  const chAv = document.getElementById("chAvatar");
+  if (friendProfile.photo) {
+    chAv.innerText = "";
+    chAv.style.backgroundImage = `url(${friendProfile.photo})`;
+  } else {
+    chAv.style.backgroundImage = "none";
+    chAv.innerText = (friendProfile.name || friendProfile.username)[0].toUpperCase();
+  }
+
+  document.getElementById("messagesBox").innerHTML = "";
   if (unsubscribeMessages) unsubscribeMessages();
 
   const messagesRef = collection(db, "chats", currentChatId, "messages");
   const q = query(messagesRef, orderBy("createdAt"));
-
   unsubscribeMessages = onSnapshot(q, (snapshot) => {
     const box = document.getElementById("messagesBox");
     box.innerHTML = "";
     snapshot.forEach((d) => {
       const msg = d.data();
-      const div = document.createElement("div");
-      div.style.margin = "5px 0";
-      div.style.textAlign = msg.sender === currentUser.uid ? "right" : "left";
-      const span = document.createElement("span");
-      span.style.cssText =
-        "background:" + (msg.sender === currentUser.uid ? "#daf1da" : "#eee") +
-        ";padding:6px 10px;border-radius:8px;display:inline-block;";
-      span.innerText = msg.text;
-      div.appendChild(span);
-      box.appendChild(div);
+      const row = document.createElement("div");
+      row.className = "msg-row " + (msg.sender === currentUser.uid ? "mine" : "theirs");
+      const bubble = document.createElement("div");
+      bubble.className = "msg-bubble";
+      bubble.innerText = msg.text;
+      row.appendChild(bubble);
+      box.appendChild(row);
     });
     box.scrollTop = box.scrollHeight;
   });
+};
+
+window.backToList = function () {
+  if (unsubscribeMessages) unsubscribeMessages();
+  document.getElementById("chatScreen").style.display = "none";
+  document.getElementById("chatListScreen").style.display = "block";
+};
+
+window.startNewChat = async function () {
+  const uname = prompt("Dost ka username daalo:");
+  if (!uname) return;
+  const clean = uname.trim().toLowerCase().replace(/^@/, "");
+  if (!clean) return;
+  if (clean === myProfile.username) return alert("Apna hi username mat daalo");
+
+  const snap = await getDoc(doc(db, "usernames", clean));
+  if (!snap.exists()) return alert("Ye username nahi mila");
+  const friendUid = snap.data().uid;
+
+  const friendSnap = await getDoc(doc(db, "users", friendUid));
+  if (!friendSnap.exists()) return alert("Dost ki profile nahi mili");
+
+  openChat(friendUid, friendSnap.data());
 };
   window.sendMessage = async function () {
     const input = document.getElementById("msgInput");
