@@ -669,13 +669,24 @@ function showProfile() {
   document.getElementById("pName").innerText = myProfile.name || "";
   document.getElementById("pBio").innerText = myProfile.bio || "";
   const av = document.getElementById("pAvatar");
-if (myProfile.photo) {
-  av.style.backgroundImage = `url(${myProfile.photo})`;
-  av.innerText = "";
-} else {
-  av.style.backgroundImage = "none";
-  av.innerText = (myProfile.name || myProfile.username)[0].toUpperCase();
-}
+  if (myProfile.photo) {
+    av.style.backgroundImage = `url(${myProfile.photo})`;
+    av.innerText = "";
+  } else {
+    av.style.backgroundImage = "none";
+    av.innerText = (myProfile.name || myProfile.username)[0].toUpperCase();
+  }
+
+  const dd = document.getElementById("ddAvatar");
+  document.getElementById("ddName").innerText = myProfile.name || myProfile.username;
+  document.getElementById("ddUsername").innerText = "@" + myProfile.username;
+  if (myProfile.photo) {
+    dd.style.backgroundImage = `url(${myProfile.photo})`;
+    dd.innerText = "";
+  } else {
+    dd.style.backgroundImage = "none";
+    dd.innerText = (myProfile.name || myProfile.username)[0].toUpperCase();
+  }
 }
  function resizeImage(file, size = 200) {
   return new Promise((resolve, reject) => {
