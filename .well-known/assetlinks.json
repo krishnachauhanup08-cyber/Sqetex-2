@@ -1,1 +1,9 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "com.sqetex.app",
+        "sha256_cert_fingerprints": ["45:4A:E9:CE:5D:64:17:17:7F:D1:35:9C:EB:C7:44:D5:84:1D:F7:3B:8C:5E:F9:96:01:7B:5C:C1:8A:99:19:33"]
+      }
+    }]
 
