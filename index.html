@@ -975,20 +975,49 @@ window.startNewChat = async function () {
 
   openChat(friendUid, friendSnap.data());
 };
-  window.sendMessage = async function () {
-    const input = document.getElementById("msgInput");
-    const text = input.value.trim();
-    if (!text || !currentChatId) return;
+window.sendMessage = async function () {
+  const input = document.getElementById("msgInput");
+  const text = input.value.trim();
+  if (!text || !currentChatId || !currentFriendUid) return;
 
-    const messagesRef = collection(db, "chats", currentChatId, "messages");
-    await addDoc(messagesRef, {
-      text: text,
-      sender: currentUser.uid,
-      createdAt: serverTimestamp()
-    });
-    input.value = "";
-  };
-  if ("serviceWorker" in navigator) {
+  const messagesRef = collection(db, "chats", currentChatId, "messages");
+  await addDoc(messagesRef, {
+    text: text,
+    sender: currentUser.uid,
+    createdAt: serverTimestamp(),
+  });
+
+  await setDoc(
+    doc(db, "userChats", currentChatId + "_" + currentUser.uid),
+    {
+      uid: currentUser.uid,
+      otherUid: currentFriendUid,
+      otherUsername: currentFriendProfile.username,
+      otherName: currentFriendProfile.name || "",
+      otherPhoto: currentFriendProfile.photo || "",
+      lastMessage: text,
+      lastMessageTime: serverTimestamp(),
+    },
+    { merge: true }
+  );
+
+  await setDoc(
+    doc(db, "userChats", currentChatId + "_" + currentFriendUid),
+    {
+      uid: currentFriendUid,
+      otherUid: currentUser.uid,
+      otherUsername: myProfile.username,
+      otherName: myProfile.name || "",
+      otherPhoto: myProfile.photo || "",
+      lastMessage: text,
+      lastMessageTime: serverTimestamp(),
+    },
+    { merge: true }
+  );
+
+  input.value = "";
+};
+  a ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("/service-worker.js");
   }
 </script>
