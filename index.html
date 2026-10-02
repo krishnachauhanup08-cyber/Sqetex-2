@@ -1017,7 +1017,7 @@ window.sendMessage = async function () {
 
   input.value = "";
 };
-  a ("serviceWorker" in navigator) {
+  if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("/service-worker.js");
   }
 </script>
