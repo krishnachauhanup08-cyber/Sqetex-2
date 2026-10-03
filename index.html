@@ -797,6 +797,7 @@ async function loadProfile(user) {
   document.getElementById("setupBox").style.display = "none";
   showProfile();
   loadChatList();
+  startPresence();
 }
 window.saveUsername = async function () {
   const username = document.getElementById("usernameInput").value.trim().toLowerCase();
