@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+w<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -972,7 +972,10 @@ getDoc(doc(db, "users", c.otherUid)).then((snap) => {
       usernameDiv.innerText = "@" + c.otherUsername;
       info.appendChild(nameDiv);
       info.appendChild(usernameDiv);
-
+      const lastDiv = document.createElement("div");
+      lastDiv.className = "chat-item-last";
+      lastDiv.innerText = c.lastMessage || "";
+      info.appendChild(lastDiv);
       const time = document.createElement("div");
       time.className = "chat-item-time";
       time.innerText = timeAgo(c.lastMessageTime);
