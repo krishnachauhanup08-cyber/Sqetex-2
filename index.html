@@ -611,8 +611,14 @@
 <div id="chatScreen" style="display:none;">
   <div class="chat-header">
     <button class="back-btn" onclick="backToList()">←</button>
-    <div class="chat-header-avatar" id="chAvatar"></div>
-    <div class="chat-header-name" id="chName"></div>
+    <div class="status-dot-wrap">
+  <div class="chat-header-avatar" id="chAvatar"></div>
+  <div class="status-dot offline" id="chStatusDot"></div>
+</div>
+<div>
+  <div class="chat-header-name" id="chName"></div>
+  <div class="chat-header-status offline" id="chStatusText">Offline</div>
+</div>
   </div>
   <div id="messagesBox"></div>
   <div class="chat-input-row">
