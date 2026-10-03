@@ -904,6 +904,7 @@ function isOnline(data) {
   if (!data.online || !data.lastSeen) return false;
   const seconds = (Date.now() - data.lastSeen.toDate().getTime()) / 1000;
   return seconds < 25;
+  let friendStatusUnsub = null;
 }
 
 function lastSeenText(data) {
