@@ -966,12 +966,12 @@ getDoc(doc(db, "users", c.otherUid)).then((snap) => {
       info.className = "chat-item-info";
       const nameDiv = document.createElement("div");
       nameDiv.className = "chat-item-name";
-      nameDiv.innerText = "@" + c.otherUsername;
-      const lastDiv = document.createElement("div");
-      lastDiv.className = "chat-item-last";
-      lastDiv.innerText = c.lastMessage || "";
+      nameDiv.innerText = c.otherName || c.otherUsername;
+      const usernameDiv = document.createElement("div");
+      usernameDiv.className = "chat-item-username";
+      usernameDiv.innerText = "@" + c.otherUsername;
       info.appendChild(nameDiv);
-      info.appendChild(lastDiv);
+      info.appendChild(usernameDiv);
 
       const time = document.createElement("div");
       time.className = "chat-item-time";
