@@ -977,7 +977,7 @@ getDoc(doc(db, "users", c.otherUid)).then((snap) => {
       time.className = "chat-item-time";
       time.innerText = timeAgo(c.lastMessageTime);
 
-      row.appendChild(avatar);
+      row.appendChild(avatarWrap);
       row.appendChild(info);
       row.appendChild(time);
       list.appendChild(row);
