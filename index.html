@@ -672,7 +672,38 @@
   let currentChatId = null;
   let unsubscribeMessages = null;
 let myProfile = null;
+let presenceInterval = null;
 
+function goOnline() {
+  if (!currentUser) return;
+  updateDoc(doc(db, "users", currentUser.uid), {
+    online: true,
+    lastSeen: serverTimestamp(),
+  }).catch(() => {});
+}
+
+function goOffline() {
+  if (!currentUser) return;
+  updateDoc(doc(db, "users", currentUser.uid), {
+    online: false,
+    lastSeen: serverTimestamp(),
+  }).catch(() => {});
+}
+
+function startPresence() {
+  goOnline();
+  if (presenceInterval) clearInterval(presenceInterval);
+  presenceInterval = setInterval(() => {
+    if (document.visibilityState === "visible") goOnline();
+  }, 20000);
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") goOnline();
+    else goOffline();
+  });
+
+  window.addEventListener("beforeunload", goOffline);
+}
 function validUsername(u) {
   return /^[a-z0-9._]{3,30}$/.test(u) && !u.includes("..") && !u.endsWith(".") && !u.startsWith(".");
 }
