@@ -900,7 +900,21 @@ function timeAgo(ts) {
   if (d.toDateString() === yesterday.toDateString()) return "Kal";
   return d.toLocaleDateString([], { day: "2-digit", month: "short" });
 }
+function isOnline(data) {
+  if (!data.online || !data.lastSeen) return false;
+  const seconds = (Date.now() - data.lastSeen.toDate().getTime()) / 1000;
+  return seconds < 25;
+}
 
+function lastSeenText(data) {
+  if (!data.lastSeen) return "Offline";
+  const mins = Math.floor((Date.now() - data.lastSeen.toDate().getTime()) / 60000);
+  if (mins < 1) return "Abhi active tha";
+  if (mins < 60) return mins + " min pehle";
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return hrs + " ghante pehle";
+  return "Kaafi der pehle";
+}
 let chatListUnsub = null;
 let currentFriendUid = null;
 let currentFriendProfile = null;
