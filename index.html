@@ -919,7 +919,7 @@ function lastSeenText(data) {
 let chatListUnsub = null;
 let currentFriendUid = null;
 let currentFriendProfile = null;
-
+let friendStatusUnsub = null;
 function loadChatList() {
   const q = query(
     collection(db, "userChats"),
