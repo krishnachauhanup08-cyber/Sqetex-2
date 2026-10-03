@@ -1003,7 +1003,22 @@ window.openChat = function (friendUid, friendProfile) {
     chAv.style.backgroundImage = "none";
     chAv.innerText = (friendProfile.name || friendProfile.username)[0].toUpperCase();
   }
-
+if (friendStatusUnsub) friendStatusUnsub();
+      friendStatusUnsub = onSnapshot(doc(db, "users", friendUid), (snap) => {
+        if (!snap.exists()) return;
+        const data = snap.data();
+        const dotEl = document.getElementById("chStatusDot");
+        const textEl = document.getElementById("chStatusText");
+        if (isOnline(data)) {
+          dotEl.className = "status-dot online";
+          textEl.className = "chat-header-status online";
+          textEl.innerText = "Online";
+        } else {
+          dotEl.className = "status-dot offline";
+          textEl.className = "chat-header-status offline";
+          textEl.innerText = lastSeenText(data);
+        }
+      });
   document.getElementById("messagesBox").innerHTML = "";
   if (unsubscribeMessages) unsubscribeMessages();
 
