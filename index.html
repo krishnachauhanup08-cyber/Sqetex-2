@@ -941,13 +941,26 @@ function loadChatList() {
           photo: c.otherPhoto,
         });
 
-      const avatar = document.createElement("div");
-      avatar.className = "chat-item-avatar";
-      if (c.otherPhoto) {
-        avatar.style.backgroundImage = `url(${c.otherPhoto})`;
-      } else {
-        avatar.innerText = (c.otherName || c.otherUsername)[0].toUpperCase();
-      }
+      const avatarWrap = document.createElement("div");
+avatarWrap.className = "status-dot-wrap";
+const avatar = document.createElement("div");
+avatar.className = "chat-item-avatar";
+if (c.otherPhoto) {
+  avatar.style.backgroundImage = `url(${c.otherPhoto})`;
+} else {
+  avatar.innerText = (c.otherName || c.otherUsername)[0].toUpperCase();
+}
+const dot = document.createElement("div");
+dot.className = "status-dot offline";
+dot.id = "dot-" + c.otherUid;
+avatarWrap.appendChild(avatar);
+avatarWrap.appendChild(dot);
+
+getDoc(doc(db, "users", c.otherUid)).then((snap) => {
+  if (snap.exists() && isOnline(snap.data())) {
+    dot.className = "status-dot online";
+  }
+});
 
       const info = document.createElement("div");
       info.className = "chat-item-info";
