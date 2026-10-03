@@ -854,6 +854,7 @@ window.editProfile = async function () {
   };
 
   window.logout = function () {
+   goOffline();
     signOut(auth);
   };
 
