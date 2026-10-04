@@ -1166,6 +1166,24 @@ window.sendMessage = async function () {
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("/service-worker.js");
   }
+ const originalSignup = window.signup;
+const originalLogin = window.login;
+
+window.signup = function () {
+  if (!document.getElementById("policyAgree").checked) {
+    alert("Please agree to the Privacy and Policy to continue");
+    return;
+  }
+  originalSignup();
+};
+
+window.login = function () {
+  if (!document.getElementById("policyAgree").checked) {
+    alert("Please agree to the Privacy and Policy to continue");
+    return;
+  }
+  originalLogin();
+}; 
 </script>
  <div id="setupBox">
   <div class="card">
