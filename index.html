@@ -550,6 +550,53 @@
 .chat-header-status { font-size: 11px; margin: 1px 0 0; }
 .chat-header-status.online { color: #0288d1; }
 .chat-header-status.offline { color: #999; }
+  #authBox .policy-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 16px 0 4px;
+  text-align: left;
+}
+#authBox .policy-row input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  border: 1.8px solid #c9d4de;
+  border-radius: 6px;
+  margin-top: 1px;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#authBox .policy-row input[type="checkbox"]:checked {
+  background: linear-gradient(135deg, #29b6f6, #0288d1);
+  border-color: #0288d1;
+}
+#authBox .policy-row input[type="checkbox"]:checked::after {
+  content: "";
+  position: absolute;
+  width: 5px;
+  height: 10px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg) translate(-1px, -1px);
+}
+#authBox .policy-row label {
+  font-size: 13px;
+  line-height: 1.5;
+  color: #888;
+  cursor: pointer;
+}
+#authBox .policy-row a {
+  color: #0288d1;
+  text-decoration: none;
+  font-weight: 600;
+  cursor: pointer;
+}
 </style>
 
 <div id="authBox">
