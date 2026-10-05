@@ -1184,6 +1184,20 @@ window.login = function () {
   }
   originalLogin();
 }; 
+  window.forgotPassword = async function () {
+  const email = document.getElementById("email").value.trim();
+  const status = document.getElementById("status");
+  if (!email) {
+    status.innerText = "Pehle upar Email box me apna email likho";
+    return;
+  }
+  try {
+    await sendPasswordResetEmail(getAuth(), email);
+    status.innerText = "Reset link email par bhej diya. Spam folder bhi check karo.";
+  } catch (err) {
+    status.innerText = "Error: " + err.message;
+  }
+};
 </script>
  <div id="setupBox">
   <div class="card">
