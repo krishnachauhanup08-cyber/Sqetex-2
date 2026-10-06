@@ -896,8 +896,16 @@ window.editProfile = async function () {
     const password = document.getElementById("password").value;
     createUserWithEmailAndPassword(auth, email, password)
       .catch((error) => {
-        document.getElementById("status").innerText = "Error: " + error.message;
-      });
+  const msgs = {
+    "auth/email-already-in-use": "This email is already registered. Please Login",
+    "auth/invalid-email": "Please enter a valid email",
+    "auth/weak-password": "Password must be at least 6 characters",
+    "auth/missing-password": "Please enter a password",
+    "auth/network-request-failed": "Check your internet connection"
+  };
+  document.getElementById("status").innerText =
+    msgs[error.code] || "Something went wrong. Try again";
+});
   };
 
   window.login = function () {
