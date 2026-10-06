@@ -923,7 +923,7 @@ window.editProfile = async function () {
   document.getElementById("status").innerText =
     msgs[error.code] || "Something went wrong. Try again";
 });
-
+};
   window.logout = function () {
    goOffline();
     signOut(auth);
