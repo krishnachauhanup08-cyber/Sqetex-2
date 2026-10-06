@@ -905,9 +905,16 @@ window.editProfile = async function () {
     const password = document.getElementById("password").value;
     signInWithEmailAndPassword(auth, email, password)
       .catch((error) => {
-        document.getElementById("status").innerText = "Error: " + error.message;
-      });
+  const msgs = {
+    "auth/invalid-credential": "Incorrect Email Or Password",
+    "auth/invalid-email": "Please enter a valid email",
+    "auth/missing-password": "Please enter your password",
+    "auth/too-many-requests": "Too many attempts. Try again later or use Forget Password",
+    "auth/network-request-failed": "Check your internet connection"
   };
+  document.getElementById("status").innerText =
+    msgs[error.code] || "Something went wrong. Try again";
+});
 
   window.logout = function () {
    goOffline();
